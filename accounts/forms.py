@@ -1,7 +1,14 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordResetForm
+# from allauth.account.forms import PasswordResetForm
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    pass
 
 # UserCreationForm tạo một biểu mẫu đăng ký người dùng mới
+
+
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
