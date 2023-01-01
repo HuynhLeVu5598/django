@@ -88,12 +88,16 @@ ACCOUNT_UNIQUE_EMAIL = True  # new
 LOGIN_REDIRECT_URL = "home"
 # điều hướng đến "home" khi đăng xuất thành công
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
+
 # reset password
-ACCOUNT_PASSWORD_RESET_TEMPLATE_NAME = 'account/password_reset_form.html'
-ACCOUNT_FORGOT_PASSWORD_TEMPLATE_NAME = "account/password_reset_form.html"
+ACCOUNT_FORMS = {"reset_password": "accounts.forms.CustomPasswordResetForm"}
+# ACCOUNT_PASSWORD_RESET_TEMPLATE_NAME = "account/password_reset_form.html"
+# ACCOUNT_FORGOT_PASSWORD_TEMPLATE_NAME = "account/password_reset_form.html"
 #  custom trang đặt lại mật khẩu
-ACCOUNT_FORMS = {'reset_password': 'accounts.forms.CustomPasswordResetForm'}
-ACCOUNT_EMAIL_TEMPLATE_NAME = 'password_reset.html'
+# from accounts.forms import CustomPasswordResetForm
+# ACCOUNT_FORMS = {'reset_password': CustomPasswordResetForm}
+
+ACCOUNT_EMAIL_TEMPLATE_NAME = "password_reset.html"
 # yêu cầu Django xuất bất kỳ email nào tới bảng điều khiển dòng lệnh
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # new
 
