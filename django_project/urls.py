@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import CustomPasswordResetView
+from django.conf import settings
+
+# tạo URL cho tập tin tĩnh (static files) trong Django project
+from django.conf.urls.static import static
+
+from django.conf.urls import handler403
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -24,4 +30,8 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     # path("accounts/", include("allauth.urls")),
     path("", include("pages.urls")),
+    path("books/", include("books.urls")),
 ]
+
+# cho phép Django tải các tập tin từ thư mục media.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

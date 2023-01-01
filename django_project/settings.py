@@ -54,9 +54,9 @@ INSTALLED_APPS = [
     "allauth.account",
     # Sử dụng lớp cấu hình mặc định của ứng dụng
     "pages",
+    "books",
     # Sử dụng lớp cấu hình riêng của bạn cho ứng dụng
     "accounts.apps.AccountsConfig",
-    # "accounts",
 ]
 
 # django-crispy-forms
@@ -71,7 +71,7 @@ AUTHENTICATION_BACKENDS = (
     # xác thực một người dùng
     "django.contrib.auth.backends.ModelBackend",
     # xác thực cụ thể (đăng nhập qua e-mail)
-    "allauth.account.auth_backends.AuthenticationBackend",  # new
+    "allauth.account.auth_backends.AuthenticationBackend",
 )
 
 # django-allauth config
@@ -80,10 +80,10 @@ ACCOUNT_SESSION_REMEMBER = True
 #  chỉ yêu cầu mật khẩu một lần khi đăng ký
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 # chỉ đăng nhập bằng email
-ACCOUNT_USERNAME_REQUIRED = False  # new
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # new
-ACCOUNT_EMAIL_REQUIRED = True  # new
-ACCOUNT_UNIQUE_EMAIL = True  # new
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
 # điều hướng đến "home" khi đăng nhập thành công
 LOGIN_REDIRECT_URL = "home"
 # điều hướng đến "home" khi đăng xuất thành công
@@ -99,7 +99,9 @@ ACCOUNT_FORMS = {"reset_password": "accounts.forms.CustomPasswordResetForm"}
 
 ACCOUNT_EMAIL_TEMPLATE_NAME = "password_reset.html"
 # yêu cầu Django xuất bất kỳ email nào tới bảng điều khiển dòng lệnh
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # new
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# dịch vụ thư điện tử smtp
+# trang sendgrip.com đang lỗi
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -191,14 +193,20 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 # danh sách các đường dẫn thư mục đến những tập tin tĩnh (CSS, JavaScript, hình ảnh)
+# các tập tin không thay đổi theo thời gian và không có sự liên kết đến các biến hoặc dữ liệu người dùng
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# URL có thể sử dụng trong các mẫu cho các tệp
+MEDIA_URL = "/media/"
+# đường dẫn hệ thống tệp tuyệt đối tới thư mục dành cho các tệp do người dùng tải lên (hình ảnh, âm thanh, video)
+# có thể được thay đổi theo thời gian hoặc có sự liên kết đến các biến hoặc dữ liệu người dùng.
+MEDIA_ROOT = BASE_DIR / "media"
 # Một danh sách các thư mục chứa các tập tin tĩnh (static files) mà bạn muốn Django tìm kiếm
 # khi bạn sử dụng các lệnh collectstatic hoặc khi sử dụng {% static %} trong các mẫu Django.
 # Khi bạn muốn sử dụng máy chủ tĩnh để phân phối tập tin tĩnh của bạn
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # chuỗi cấu hình cho lớp cung cấp lưu trữ tĩnh
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"  # new
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 
 # Default primary key field type
@@ -208,4 +216,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-DEFAULT_FROM_EMAIL = "huynhlevu5598@gmail.com"
+DEFAULT_FROM_EMAIL = "huynhlevu55981@gmail.com"
