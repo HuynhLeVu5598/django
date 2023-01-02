@@ -22,8 +22,14 @@ from django.conf.urls.static import static
 
 from django.conf.urls import handler403
 
+if settings.DEBUG:
+    import debug_toolbar
 
-urlpatterns = [
+    urlpatterns = [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ]
+
+urlpatterns += [
     path("admin/", admin.site.urls),
     # chứa URL patterns cho các tính năng xác thực và quản trị người dùng trong Django
     # path("accounts/", include("django.contrib.auth.urls")),
@@ -31,6 +37,7 @@ urlpatterns = [
     # path("accounts/", include("allauth.urls")),
     path("", include("pages.urls")),
     path("books/", include("books.urls")),
+    path("api/", include("apis.urls")), 
 ]
 
 # cho phép Django tải các tập tin từ thư mục media.

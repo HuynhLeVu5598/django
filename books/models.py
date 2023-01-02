@@ -8,6 +8,10 @@ import uuid
 class Book(models.Model):
     id = models.UUIDField(
         primary_key=True,
+        # lập chỉ mục là một kỹ thuật phổ biến để tăng tốc hiệu suất cơ sở dữ liệu
+        # Nhược điểm là các chỉ mục yêu cầu thêm dung lượng trên đĩa
+        # Một nguyên tắc chung là nếu một trường nhất định đang được sử dụng thường xuyên, chẳng hạn như 10-25% của tất cả các truy vấn, thì đó là ứng cử viên chính để được lập chỉ mục.
+        db_index=True,
         default=uuid.uuid4,  #  dùng uuid4 cho việc mã hóa.
         editable=False,
     )
@@ -20,6 +24,9 @@ class Book(models.Model):
     # "Meta" là một lớp trong Django cho phép bạn định nghĩa các thuộc tính mà không phải là trường dữ liệu của mô hình
     # tác giả có thể đọc tất cả sách. nói cách khác họ có quyền truy cập vào DetailView
     class Meta:
+        indexes = [
+            models.Index(fields=["id"], name="id_index"),
+        ]
         permissions = [
             ("special_status", "Can read all books"),
         ]
@@ -36,7 +43,9 @@ class Review(models.Model):  # new
     book = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,
-        related_name="reviews",  # để làm cho việc theo dõi khóa ngoại dễ dàng hơn
+        # để làm cho việc theo dõi khóa ngoại dễ dàng hơn
+        # tên mặc định "modelname_set"
+        related_name="reviews",
     )
     review = models.CharField(max_length=255)
     author = models.ForeignKey(

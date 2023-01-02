@@ -1,0 +1,16 @@
+# chỉ định những tiện ích bổ sung nào là cần thiết
+setup:
+  addons:
+    - plan: heroku-postgresql
+# chỉ định cách Dockerfile được xây dựng
+build:
+  docker:
+    web: Dockerfile
+# chạy các tác vụ trước mỗi bản phát hành mới được triển khai
+release:
+  image: web
+  command:
+    - python manage.py collectstatic --noinput
+# chỉ định quy trình nào thực sự chạy ứng dụng
+run:
+  web: gunicorn django_project.wsgi

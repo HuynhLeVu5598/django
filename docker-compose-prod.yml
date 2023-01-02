@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    #command: python manage.py runserver 0.0.0.0:8000
+    # gunicorn dùng để chạy các ứng dung trên máy chủ, tăng tốc độ xử lý
+    command: gunicorn django_project.wsgi -b 0.0.0.0:8000
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    environment:
+      - "DJANGO_SECRET_KEY=3nFjcZieShrozD907D01d3AaCkXv4NUBvYkjd-HuFMiRGGP_NRw"
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+volumes:
+  postgres_data:

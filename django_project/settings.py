@@ -12,12 +12,18 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from environs import Env
+import socket
 
 env = Env()
 env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#  tên host, tên alias và danh sách địa chỉ IP của máy tính hiện tại.
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+# danh sách các địa chỉ IP nội bộ được tạo bằng cách lấy từng phần tử trong danh sách ips và thêm ký tự "1" vào cuối
+INTERNAL_IPS = [ip[:-1] + "1" for ip in ips]
+# => đảm bảo rằng INTERNAL_IPS phù hợp với máy chủ Docker
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -28,10 +34,30 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = env.bool("DJANGO_DEBUG")
+# DEBUG = env.bool("DJANGO_DEBUG")
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
+SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
 
-ALLOWED_HOSTS = []
+# xác định số giây mà trình duyệt sẽ yêu cầu một kết nối SSL cho trang web. Nếu giá trị là 0, thẻ HSTS sẽ không được sử dụng.
+# được đặt thành 0 theo mặc định nhưng càng lớn càng tốt cho mục đích bảo mật
+SECURE_HSTS_SECONDS = env.int("DJANGO_SECURE_HSTS_SECONDS", default=2592000)  # 30 days
+# buộc các tên miền phụ sử dụng SSL, sẽ đặt nó thành True trong sản xuất.
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
+    "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
+)
+# yêu cầu trình duyệt sử dụng SSL cho trang web trước khi trang web đó được yêu cầu
+# chỉ có tác dụng khi SECURE_HSTS_SECONDS # 0
+SECURE_HSTS_PRELOAD = env.bool("DJANGO_SECURE_HSTS_PRELOAD", default=True)
+
+# Nếu đặt là True, cookie phiên đăng nhập sẽ chỉ được gửi qua một kết nối HTTPS an toàn.
+# Nếu đặt là False, cookie có thể được gửi qua một kết nối HTTP không an toàn.
+SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE", default=True)
+# Nếu đặt là True, cookie bảo vệ CSRF sẽ chỉ được gửi qua một kết nối HTTPS an toàn.
+# Nếu đặt là False, cookie có thể được gửi qua một kết nối HTTP không an toàn.
+CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE", default=True)
+
+ALLOWED_HOSTS = [".herokuapp.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -43,6 +69,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # thư viện mạnh mẽ được sử dụng để xây dựng các API
+    "rest_framework", 
+    # xử lý tệp tĩnh trên các nền tảng hosting
+    "whitenoise.runserver_nostatic", 
     # Django Crispy Forms là một thư viện mã nguồn mở cho phép bạn tạo các form HTML dễ dàng hơn trong Django
     "crispy_forms",
     "crispy_bootstrap5",
@@ -52,9 +82,12 @@ INSTALLED_APPS = [
     # Django Allauth là một công cụ mạnh mẽ cho phép bạn tích hợp đăng nhập và đăng ký qua các dịch vụ xác thực như Google, Facebook, Twitter và nhiều dịch vụ khác vào trang web của bạn
     "allauth",
     "allauth.account",
+    #  tối ưu hóa các truy vấn cơ sở dữ liệu
+    "debug_toolbar",
     # Sử dụng lớp cấu hình mặc định của ứng dụng
     "pages",
     "books",
+    "apis",
     # Sử dụng lớp cấu hình riêng của bạn cho ứng dụng
     "accounts.apps.AccountsConfig",
 ]
@@ -111,7 +144,22 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # lấy các yêu cầu từ bộ nhớ cache của hệ thống
+    # Nếu có một yêu cầu đã được lưu trữ trong cache, middleware sẽ trả về câu trả lời từ cache và không gửi yêu cầu đến server
+    # giúp giảm đáng kể thời gian xử lý yêu cầu và tăng tốc độ truy cập cho người dùng
+    "django.middleware.cache.FetchFromCacheMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
+
+#  Tên alias của bộ nhớ cache sẽ được sử dụng cho middleware.
+CACHE_MIDDLEWARE_ALIAS = "default"
+# số giây để lưu trữ bộ nhớ cache
+# mặc định là 1 tuần  cho trang web có nội dung không thay đổi thường xuyên
+# rút ngắn thời gian nếu trang web có nội dung thay đổi thường xuyên
+CACHE_MIDDLEWARE_SECONDS = 604800
+# Tiền tố cho mỗi khóa bộ nhớ cache.
+CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 ROOT_URLCONF = "django_project.urls"
 
@@ -206,7 +254,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # Khi bạn muốn sử dụng máy chủ tĩnh để phân phối tập tin tĩnh của bạn
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # chuỗi cấu hình cho lớp cung cấp lưu trữ tĩnh
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+#STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+# xử lý và phân phối tệp tĩnh trên web. Nó hỗ trợ nén và tối ưu hóa tệp tĩnh, giúp trang web của bạn tải nhanh hơn.
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" 
 
 
 # Default primary key field type
