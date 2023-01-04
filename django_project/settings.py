@@ -70,9 +70,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # thư viện mạnh mẽ được sử dụng để xây dựng các API
-    "rest_framework", 
+    "rest_framework",
+    # cho phép khách hàng xác định xem có nên cho phép các yêu cầu tên miền chéo hay không và khi nào
+    # xử lý các yêu cầu gửi đến server từ một domain khác
+    "corsheaders",
     # xử lý tệp tĩnh trên các nền tảng hosting
-    "whitenoise.runserver_nostatic", 
+    "whitenoise.runserver_nostatic",
     # Django Crispy Forms là một thư viện mã nguồn mở cho phép bạn tạo các form HTML dễ dàng hơn trong Django
     "crispy_forms",
     "crispy_bootstrap5",
@@ -82,15 +85,39 @@ INSTALLED_APPS = [
     # Django Allauth là một công cụ mạnh mẽ cho phép bạn tích hợp đăng nhập và đăng ký qua các dịch vụ xác thực như Google, Facebook, Twitter và nhiều dịch vụ khác vào trang web của bạn
     "allauth",
     "allauth.account",
+    # https://testdriven.io/blog/django-social-auth/
+    # https://learndjango.com/tutorials/django-allauth-tutorial
+    # nếu gặp lỗi SocialApp matching query does not exist: https://stackoverflow.com/questions/15409366/django-socialapp-matching-query-does-not-exist
+    "allauth.socialaccount",
+    # social providers
+    "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.twitter",
     #  tối ưu hóa các truy vấn cơ sở dữ liệu
     "debug_toolbar",
     # Sử dụng lớp cấu hình mặc định của ứng dụng
     "pages",
     "books",
     "apis",
+    "postapis",
     # Sử dụng lớp cấu hình riêng của bạn cho ứng dụng
     "accounts.apps.AccountsConfig",
 ]
+
+# REST_FRAMEWORK cấu hình các tùy chọn cho API
+# bao gồm cách thức xác thực và lập lịch cho API, cách thức sử dụng phân trang, bảo mật và cách thức sử dụng các serializer
+REST_FRAMEWORK = {
+    # định nghĩa một lớp quyền mặc định sẽ được sử dụng cho toàn bộ các ViewSet của dự án
+    "DEFAULT_PERMISSION_CLASSES": [
+        # bất kỳ người dùng nào, được xác thực hay không, đều có toàn quyền truy cập
+        # "rest_framework.permissions.AllowAny",
+        # chỉ người dùng đã đăng ký có quyền truy cập
+        "rest_framework.permissions.IsAuthenticated",
+        # chỉ quản trị viên/siêu người dùng mới có quyền truy cập
+        # "rest_framework.permissions.IsAdminUser",
+        # người dùng trái phép có thể xem bất kỳ trang nào, nhưng chỉ người dùng được xác thực mới có đặc quyền viết, chỉnh sửa hoặc xóa
+        # "rest_framework.permissions.IsAuthenticatedOrReadOnly ",
+    ],
+}
 
 # django-crispy-forms
 # xác định các bộ template mà bạn muốn sử dụng
@@ -98,14 +125,16 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 # xác định bộ template mà bạn muốn sử dụng mặc định cho toàn bộ form trong ứng dụng của bạn
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-# ID của trang web mà bạn đang xây dựng trong hệ thống các trang web của mình.
-SITE_ID = 1
+
 AUTHENTICATION_BACKENDS = (
     # xác thực một người dùng
     "django.contrib.auth.backends.ModelBackend",
     # xác thực cụ thể (đăng nhập qua e-mail)
     "allauth.account.auth_backends.AuthenticationBackend",
 )
+
+# ID của trang web mà bạn đang xây dựng trong hệ thống các trang web của mình.
+SITE_ID = 1
 
 # django-allauth config
 # tùy chọn hộp “Remember Me” sẽ đặt thành True và không hiển thị
@@ -122,19 +151,62 @@ LOGIN_REDIRECT_URL = "home"
 # điều hướng đến "home" khi đăng xuất thành công
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 
-# reset password
-ACCOUNT_FORMS = {"reset_password": "accounts.forms.CustomPasswordResetForm"}
+# https://django-allauth.readthedocs.io/en/latest/forms.html
+ACCOUNT_FORMS = {
+    # form nhập email khi quên mật khẩu
+    "reset_password": "accounts.forms.CustomPasswordResetForm",
+    # đổi mật khẩu
+    "change_password": "accounts.forms.CustomPasswordChangeForm",
+    # url đổi mk khi quên mật khẩu
+    "reset_password_from_key": "accounts.forms.CustomResetPasswordKeyForm",
+}
+
+# ACCOUNT_FORMS = {
+#     'login': 'allauth.account.forms.LoginForm',
+#     'signup': 'allauth.account.forms.SignupForm',
+#     'add_email': 'allauth.account.forms.AddEmailForm',
+#     'change_password': 'allauth.account.forms.ChangePasswordForm',
+#     'set_password': 'allauth.account.forms.SetPasswordForm',
+#     'reset_password': 'allauth.account.forms.ResetPasswordForm',
+#     'reset_password_from_key':
+#     'allauth.account.forms.ResetPasswordKeyForm',
+#     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+# }
+# ACCOUNT_PASSWORD_CHANGE_FORM_CLASS = 'accounts.forms.CustomPasswordChangeForm'
 # ACCOUNT_PASSWORD_RESET_TEMPLATE_NAME = "account/password_reset_form.html"
 # ACCOUNT_FORGOT_PASSWORD_TEMPLATE_NAME = "account/password_reset_form.html"
-#  custom trang đặt lại mật khẩu
-# from accounts.forms import CustomPasswordResetForm
-# ACCOUNT_FORMS = {'reset_password': CustomPasswordResetForm}
+# ACCOUNT_EMAIL_TEMPLATE_NAME = "password_reset.html"
 
-ACCOUNT_EMAIL_TEMPLATE_NAME = "password_reset.html"
+
 # yêu cầu Django xuất bất kỳ email nào tới bảng điều khiển dòng lệnh
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # dịch vụ thư điện tử smtp
 # trang sendgrip.com đang lỗi
+
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    "github": {
+        "APP": {
+            "client_id": env("GITHUB_CLIENT_ID"),
+            "secret": env("GITHUB_API_SECRET"),
+            # "key": env("GITHUB_APP_ID"),
+        }
+    },
+}
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     "facebook": {
+#         "CLIENT_ID": "<your-client-id>",
+#         "SECRET_KEY": "<your-secret-key>",
+#     },
+#     "google": {
+#         "CLIENT_ID": "<your-client-id>",
+#         "SECRET_KEY": "<your-secret-key>",
+#     },
+# }
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -145,12 +217,26 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     # lấy các yêu cầu từ bộ nhớ cache của hệ thống
     # Nếu có một yêu cầu đã được lưu trữ trong cache, middleware sẽ trả về câu trả lời từ cache và không gửi yêu cầu đến server
     # giúp giảm đáng kể thời gian xử lý yêu cầu và tăng tốc độ truy cập cho người dùng
     "django.middleware.cache.FetchFromCacheMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
+
+#  danh sách các tên miền hoặc địa chỉ IP được cho phép gửi yêu cầu tới server
+CORS_ALLOWED_ORIGINS = (
+    # cổng mặc định cho React (nếu đó là giao diện người dùng đang được sử dụng)
+    "http://localhost:3000",
+    # cổng Django mặc định.
+    "http://localhost:8000",
+)
+
+#  giao diện người dùng React chuyên dụng, tính năng bảo vệ CSRF không có sẵn
+# được sử dụng để xác định những tên miền nào được tin tưởng và có thể gửi yêu cầu với mã thông báo Cross-Site Request Forgery (CSRF).
+# Điều này có nghĩa là khi một yêu cầu đến từ một tên miền được xác định trong danh sách này, Django sẽ cho phép yêu cầu đó được xử lý mà không cần kiểm tra mã thông báo CSRF.
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 
 #  Tên alias của bộ nhớ cache sẽ được sử dụng cho middleware.
 CACHE_MIDDLEWARE_ALIAS = "default"
@@ -228,8 +314,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
+# LANGUAGE_CODE = "vi"
+# Cập nhật múi giờ
+# TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Ho_Chi_Minh"
 
 USE_I18N = True
 
@@ -254,9 +342,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # Khi bạn muốn sử dụng máy chủ tĩnh để phân phối tập tin tĩnh của bạn
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # chuỗi cấu hình cho lớp cung cấp lưu trữ tĩnh
-#STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+# STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 # xử lý và phân phối tệp tĩnh trên web. Nó hỗ trợ nén và tối ưu hóa tệp tĩnh, giúp trang web của bạn tải nhanh hơn.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # Default primary key field type
@@ -264,6 +352,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# một biến toàn cục trong Django, được sử dụng để xác định model nào sẽ được sử dụng làm model người dùng trong hệ thống
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 DEFAULT_FROM_EMAIL = "huynhlevu55981@gmail.com"
