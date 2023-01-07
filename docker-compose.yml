@@ -20,7 +20,8 @@ services:
       - "DJANGO_SESSION_COOKIE_SECURE=False"
       - "DJANGO_CSRF_COOKIE_SECURE=False"
       - "GITHUB_CLIENT_ID=93bf12e2c8bae54b2e56"
-      - "GITHUB_API_SECRET=b163b8d122655fe4593d5ce0d97f8f838d88f817"
+      - "GITHUB_API_SECRET=3ee68a86e72d643adea956d816791238fbb461a8"
+      - "GITHUB_APP_KEY=0"
  
   db:
     image: postgres:13

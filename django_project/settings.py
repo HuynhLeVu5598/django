@@ -91,7 +91,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     # social providers
     "allauth.socialaccount.providers.github",
-    "allauth.socialaccount.providers.twitter",
+    # "allauth.socialaccount.providers.twitter",
     #  tối ưu hóa các truy vấn cơ sở dữ liệu
     "debug_toolbar",
     # Sử dụng lớp cấu hình mặc định của ứng dụng
@@ -101,6 +101,12 @@ INSTALLED_APPS = [
     "postapis",
     # Sử dụng lớp cấu hình riêng của bạn cho ứng dụng
     "accounts.apps.AccountsConfig",
+    # Font Awesome
+    # https://fontawesome.com/docs/web/use-with/python-django
+    "fontawesomefree",
+    "rest_framework.authtoken",  # new
+    # là một package trong Django cho phép bạn xây dựng các API RESTful cho việc đăng nhập, đăng ký, quên mật khẩu và các tác vụ liên quan khác.
+    "dj_rest_auth",  # new
 ]
 
 # REST_FRAMEWORK cấu hình các tùy chọn cho API
@@ -116,6 +122,18 @@ REST_FRAMEWORK = {
         # "rest_framework.permissions.IsAdminUser",
         # người dùng trái phép có thể xem bất kỳ trang nào, nhưng chỉ người dùng được xác thực mới có đặc quyền viết, chỉnh sửa hoặc xóa
         # "rest_framework.permissions.IsAuthenticatedOrReadOnly ",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [  # new
+        # nếu client gửi một yêu cầu bằng một trong các phương thức "SAFE_METHODS" (GET, HEAD, OPTIONS),
+        # thì Rest Framework sẽ cho phép yêu cầu đó thông qua mà không yêu cầu xác thực người dùng.
+        # "SessionAuthentication" là một lớp xác thực sử dụng cookie để xác thực người dùng
+        "rest_framework.authentication.SessionAuthentication",
+        # "BasicAuthentication" là một lớp xác thực sử dụng HTTP Basic Auth để xác thực người dùng.
+        # "rest_framework.authentication.BasicAuthentication",
+        # TokenAuthentication là một trong các phương thức xác thực mà Django REST framework hỗ trợ.
+        #  Nó sử dụng một token để xác thực người dùng trên mỗi yêu cầu.
+        # Token có thể được lưu trữ trong cookie hoặc trong trình duyệt để lưu lại đăng nhập người dùng
+        "rest_framework.authentication.TokenAuthentication",  # new
     ],
 }
 
@@ -150,6 +168,7 @@ ACCOUNT_UNIQUE_EMAIL = True
 LOGIN_REDIRECT_URL = "home"
 # điều hướng đến "home" khi đăng xuất thành công
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
+
 
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 ACCOUNT_FORMS = {
@@ -191,9 +210,10 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": env("GITHUB_CLIENT_ID"),
             "secret": env("GITHUB_API_SECRET"),
-            # "key": env("GITHUB_APP_ID"),
+            "key": env("GITHUB_APP_KEY"),
         }
     },
+    "VERIFIED_EMAIL": True,
 }
 
 # SOCIALACCOUNT_PROVIDERS = {

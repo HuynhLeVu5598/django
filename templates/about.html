@@ -6,13 +6,52 @@
 {% block content %}
 <h1>About Page</h1>
 
-{% load socialaccount %}
+
+<!-- các tag Django để tải các tập tin JS cần thiết cho các nút đăng nhập xã hội. -->
+<!-- {% providers_media_js %}
+
 
 <h1>Django Allauth Tutorial</h1>
 {% if user.is_authenticated %}
 <p>Welcome {{ user.username }} !!!</p>
 {% else %}
-<a href="{% provider_login_url 'github' %}">Sign Up</a>
-{% endif %}
+{% get_providers as socialaccount_providers %}
+{% for provider in socialaccount_providers %} -->
+<!-- lấy đường dẫn đăng nhập cho mỗi nhà cung cấp và tham số "next" để chỉ ra trang mà người dùng sẽ được chuyển hướng sau khi đăng nhập thành công. -->
+<!-- <a href="{% provider_login_url provider.id %}?next={{ request.path }}" class="btn btn-social btn-{{ provider.id }}">
+<i class="fa fa-{{ provider.id }}"></i> Sign in with {{ provider.name }}
+</a>
+{% endfor %} -->
+
+
+
+<!-- <a href="{% provider_login_url 'github' %}">Sign Up</a> -->
+<!-- <a href="{% provider_login_url "github" process="login" method="js_sdk" %}">Login with your Github Account</a>   -->
+<!-- 
+{% endif %} -->
+
+
+
+<!-- {% load socialaccount %}
+
+
+<form method="post" action="{% url 'account_login' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div style="display: inline-block">
+        <button class="btn btn-success" type="submit">Log In</button>
+    </div>
+    {% get_providers as socialaccount_providers %}
+    {% for provider in socialaccount_providers %} 
+        <a href="{% provider_login_url provider.id %}?next={{ request.path }}" >
+            <button class="btn btn-success" style="margin: 10px;">
+                <i class="fa-brands fa-github"></i> Log in with {{ provider.name }}
+            </button>
+        </a>
+    {% endfor %} 
+</form> -->
+
+
+
 
 {% endblock content %}

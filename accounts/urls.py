@@ -42,4 +42,5 @@ urlpatterns = [
         name="custom_reset_password_key_done",
     ),
     path("", include("allauth.urls")),
+    # /github/login/?next=/accounts/login/
 ]

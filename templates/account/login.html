@@ -4,15 +4,50 @@
 
 {% block title %}Log In{% endblock title %}
 {% block content %}
+{% load socialaccount %}
+
 <h2>Log In</h2>
-<form method="post" action="{% url 'account_login' %}">
-    {% csrf_token %}
-    <!-- {{ form.as_p }} -->
-    {{ form|crispy }}
-    <button class="btn btn-success" type="submit">Log In</button>
-</form>
-<br>
-<div class="col-6">
-    <a class="btn btn-primary" href="{% url 'account_reset_password' %}">Forget Password</a>
+<!-- Thẻ div sử dụng lớp mx-auto sẽ đặt form tại giữa trang theo chiều ngang, còn lớp d-flex sẽ cho phép bạn điều chỉnh vị trí của form theo chiều dọc bằng cách sử dụng các lớp align-items-*. -->
+<div class="mx-auto d-flex align-items-center">
+    <form style="width: 500px;" method="post" action="{% url 'account_login' %}" class="mx-auto">
+        {% csrf_token %}
+        <!-- {{ form.as_p }} -->
+        {{ form|crispy }}
+        <div class="d-flex justify-content-center">
+            <button style="width: 200px;" class="btn btn-success" type="submit">Log In</button>
+        </div>
+
+    </form>
 </div>
+
+
+<br>
+<div class="d-flex justify-content-center">
+    <a style="width: 200px;" class="btn btn-primary" href="{% url 'account_reset_password' %}">Forget Password</a>
+</div>
+
+<br>
+<h2>Social Log In</h2>
+
+{% get_providers as socialaccount_providers %}
+{% for provider in socialaccount_providers %} 
+
+<!-- sử dụng class d-flex justify-content-center trong thẻ div bao quanh các button để căn giữa các button -->
+<div class="d-flex justify-content-center">
+<!-- lấy đường dẫn đăng nhập cho mỗi nhà cung cấp và tham số "next" để chỉ ra trang mà người dùng sẽ được chuyển hướng sau khi đăng nhập thành công. -->
+<a href="{% provider_login_url provider.id %}?next={{ request.path }}" >
+    <button class="btn btn-success" style="margin: 10px;">
+        <!-- <i class="fa-brands fa-github"></i> nằm trong  Font Awesome -->
+        <i class="fa-brands fa-github"></i> Log in with {{ provider.name }}
+    </button>
+</a>
+</div>
+  
+
+{% endfor %} 
 {% endblock content %}
+
+
+<!-- <a href="{% provider_login_url 'github' %}">Sign Up</a> -->
+<!-- <a href="{% provider_login_url "github" process="login" method="js_sdk" %}">Login with your Github Account</a>   -->
+
