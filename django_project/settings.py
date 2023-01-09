@@ -107,6 +107,8 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",  # new
     # là một package trong Django cho phép bạn xây dựng các API RESTful cho việc đăng nhập, đăng ký, quên mật khẩu và các tác vụ liên quan khác.
     "dj_rest_auth",  # new
+    # DRF Spectacular là một công cụ hỗ trợ cho Django REST framework (DRF) cho phép bạn tạo ra tài liệu API động trong dạng HTML
+    "drf_spectacular",
 ]
 
 # REST_FRAMEWORK cấu hình các tùy chọn cho API
@@ -135,6 +137,20 @@ REST_FRAMEWORK = {
         # Token có thể được lưu trữ trong cookie hoặc trong trình duyệt để lưu lại đăng nhập người dùng
         "rest_framework.authentication.TokenAuthentication",  # new
     ],
+    # Thiết lập này xác định kiểu schema sẽ được sử dụng mặc định cho các API.
+    # AutoSchema là một lớp cho phép tự động tạo ra các tài liệu OpenAPI từ các view và serializers của Django REST framework.
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+
+# là một tập hợp các thiết lập cho Django REST framework (DRF) Spectacular, một thư viện giúp tạo tài liệu OpenAPI cho các API Django.
+# Trong trường hợp cụ thể, các thiết lập này định nghĩa các thông tin cơ bản về dự án API, bao gồm tiêu đề, mô tả và phiên bản.
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Blog API Project",
+    "DESCRIPTION": "A sample blog to learn about DRF",
+    "VERSION": "1.0.0",
+    # OTHER SETTINGS
+    # như địa chỉ URL của tài liệu, ngôn ngữ sử dụng, ...
 }
 
 # django-crispy-forms

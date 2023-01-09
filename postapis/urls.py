@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import PostListAPI, PostDetailAPI
-from .views import PostList, PostDetail, UserList, UserDetail  # new
+
+from .views import UserList, UserDetail  # new
 
 # Routers làm việc trực tiếp với các Viewsets để tự động tạo các mẫu URL
 # SimpleRouter là một loại Router cung cấp một cách đơn giản để xây dựng các API bằng cách tự động tạo ra các URL cho tất cả các phương thức HTTP trong Viewset.

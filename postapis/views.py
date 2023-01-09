@@ -3,9 +3,11 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import generics, permissions
 from .models import Post
-from .serializers import PostSerializer
+from .serializers import PostSerializer, UserSerializer
 from .permissions import IsAuthorOrReadOnly  # new
 from rest_framework.permissions import IsAdminUser  # new
+from rest_framework import viewsets
+from django.contrib.auth import get_user_model  # new
 
 
 # ListCreateAPIView tạo và trả về danh sách các đối tượng
@@ -32,5 +34,17 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]  # new
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+
+class UserList(generics.ListCreateAPIView):  # new
+    #  lấy danh sách tất cả người dùng
+    queryset = get_user_model().objects.all()
+    # chuyển đổi các thuộc tính của người dùng thành đối tượng JSON.
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):  # new
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
