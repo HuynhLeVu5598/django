@@ -38,7 +38,7 @@ urlpatterns += [
     path("", include("pages.urls")),
     path("books/", include("books.urls")),
     path("api/", include("apis.urls")),
-    path("apps/", include("apps.urls")),
+    path("foods/", include("foods.urls")),
     path("markdownx/", include("markdownx.urls")),
 ]
 

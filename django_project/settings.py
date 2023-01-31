@@ -106,7 +106,7 @@ INSTALLED_APPS = [
     "apis",
     "postapis",
     "polls",
-    "apps",
+    "foods",
     # Sử dụng lớp cấu hình riêng của bạn cho ứng dụng
     "accounts.apps.AccountsConfig",
     # Font Awesome
