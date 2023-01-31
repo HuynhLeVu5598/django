@@ -61,13 +61,19 @@ ALLOWED_HOSTS = [".herokuapp.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
-
+# Lệnh migrate sẽ chỉ chạy migrations cho các ứng dụng trong INSTALLED_APPS.
 INSTALLED_APPS = [
+    # Trang quản trị
     "django.contrib.admin",
+    # Một hệ thống xác thực.
     "django.contrib.auth",
+    # Một khuôn khổ cho các loại nội dung.
     "django.contrib.contenttypes",
+    # Một khung phiên.
     "django.contrib.sessions",
+    # Một khung nhắn tin.
     "django.contrib.messages",
+    # Một khuôn khổ để quản lý các tập tin tĩnh.
     "django.contrib.staticfiles",
     # thư viện mạnh mẽ được sử dụng để xây dựng các API
     "rest_framework",
@@ -99,6 +105,8 @@ INSTALLED_APPS = [
     "books",
     "apis",
     "postapis",
+    "polls",
+    "apps",
     # Sử dụng lớp cấu hình riêng của bạn cho ứng dụng
     "accounts.apps.AccountsConfig",
     # Font Awesome
@@ -109,6 +117,10 @@ INSTALLED_APPS = [
     "dj_rest_auth",  # new
     # DRF Spectacular là một công cụ hỗ trợ cho Django REST framework (DRF) cho phép bạn tạo ra tài liệu API động trong dạng HTML
     "drf_spectacular",
+    # các trường để có giao diện đẹp hơn
+    "markdownx",
+    # handle duration field in the form
+    "durationwidget",
 ]
 
 # REST_FRAMEWORK cấu hình các tùy chọn cho API

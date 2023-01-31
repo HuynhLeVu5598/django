@@ -37,7 +37,9 @@ urlpatterns += [
     # path("accounts/", include("allauth.urls")),
     path("", include("pages.urls")),
     path("books/", include("books.urls")),
-    path("api/", include("apis.urls")), 
+    path("api/", include("apis.urls")),
+    path("apps/", include("apps.urls")),
+    path("markdownx/", include("markdownx.urls")),
 ]
 
 # cho phép Django tải các tập tin từ thư mục media.
