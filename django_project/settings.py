@@ -14,6 +14,10 @@ from pathlib import Path
 from environs import Env
 import socket
 
+# from cloth.defaults import *
+from shop.defaults import *
+
+
 env = Env()
 env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -121,6 +125,73 @@ INSTALLED_APPS = [
     "markdownx",
     # handle duration field in the form
     "durationwidget",
+    "django.contrib.flatpages",
+    # "cloth.config.Shop",
+    # "cloth.apps.analytics.apps.AnalyticsConfig",
+    # "cloth.apps.checkout.apps.CheckoutConfig",
+    # "cloth.apps.address.apps.AddressConfig",
+    # "cloth.apps.shipping.apps.ShippingConfig",
+    # "cloth.apps.catalogue.apps.CatalogueConfig",
+    # "cloth.apps.catalogue.reviews.apps.CatalogueReviewsConfig",
+    # "cloth.apps.communication.apps.CommunicationConfig",
+    # "cloth.apps.partner.apps.PartnerConfig",
+    # "cloth.apps.basket.apps.BasketConfig",
+    # "cloth.apps.payment.apps.PaymentConfig",
+    # "cloth.apps.offer.apps.OfferConfig",
+    # "cloth.apps.order.apps.OrderConfig",
+    # "cloth.apps.customer.apps.CustomerConfig",
+    # "cloth.apps.search.apps.SearchConfig",
+    # "cloth.apps.voucher.apps.VoucherConfig",
+    # "cloth.apps.wishlists.apps.WishlistsConfig",
+    # "cloth.apps.dashboard.apps.DashboardConfig",
+    # "cloth.apps.dashboard.reports.apps.ReportsDashboardConfig",
+    # "cloth.apps.dashboard.users.apps.UsersDashboardConfig",
+    # "cloth.apps.dashboard.orders.apps.OrdersDashboardConfig",
+    # "cloth.apps.dashboard.catalogue.apps.CatalogueDashboardConfig",
+    # "cloth.apps.dashboard.offers.apps.OffersDashboardConfig",
+    # "cloth.apps.dashboard.partners.apps.PartnersDashboardConfig",
+    # "cloth.apps.dashboard.pages.apps.PagesDashboardConfig",
+    # "cloth.apps.dashboard.ranges.apps.RangesDashboardConfig",
+    # "cloth.apps.dashboard.reviews.apps.ReviewsDashboardConfig",
+    # "cloth.apps.dashboard.vouchers.apps.VouchersDashboardConfig",
+    # "cloth.apps.dashboard.communications.apps.CommunicationsDashboardConfig",
+    # "cloth.apps.dashboard.shipping.apps.ShippingDashboardConfig",
+    "shop.config.Shop",
+    "shop.apps.analytics.apps.AnalyticsConfig",
+    "shop.apps.checkout.apps.CheckoutConfig",
+    "shop.apps.address.apps.AddressConfig",
+    "shop.apps.shipping.apps.ShippingConfig",
+    "shop.apps.catalogue.apps.CatalogueConfig",
+    "shop.apps.catalogue.reviews.apps.CatalogueReviewsConfig",
+    "shop.apps.communication.apps.CommunicationConfig",
+    "shop.apps.partner.apps.PartnerConfig",
+    "shop.apps.basket.apps.BasketConfig",
+    "shop.apps.payment.apps.PaymentConfig",
+    "shop.apps.offer.apps.OfferConfig",
+    "shop.apps.order.apps.OrderConfig",
+    "shop.apps.customer.apps.CustomerConfig",
+    "shop.apps.search.apps.SearchConfig",
+    "shop.apps.voucher.apps.VoucherConfig",
+    "shop.apps.wishlists.apps.WishlistsConfig",
+    "shop.apps.dashboard.apps.DashboardConfig",
+    "shop.apps.dashboard.reports.apps.ReportsDashboardConfig",
+    "shop.apps.dashboard.users.apps.UsersDashboardConfig",
+    "shop.apps.dashboard.orders.apps.OrdersDashboardConfig",
+    "shop.apps.dashboard.catalogue.apps.CatalogueDashboardConfig",
+    "shop.apps.dashboard.offers.apps.OffersDashboardConfig",
+    "shop.apps.dashboard.partners.apps.PartnersDashboardConfig",
+    "shop.apps.dashboard.pages.apps.PagesDashboardConfig",
+    "shop.apps.dashboard.ranges.apps.RangesDashboardConfig",
+    "shop.apps.dashboard.reviews.apps.ReviewsDashboardConfig",
+    "shop.apps.dashboard.vouchers.apps.VouchersDashboardConfig",
+    "shop.apps.dashboard.communications.apps.CommunicationsDashboardConfig",
+    "shop.apps.dashboard.shipping.apps.ShippingDashboardConfig",
+    # 3rd-party apps that cloth depends on
+    "widget_tweaks",
+    "haystack",
+    "treebeard",
+    "sorl.thumbnail",  # Default thumbnail backend, can be replaced
+    "django_tables2",
 ]
 
 # REST_FRAMEWORK cấu hình các tùy chọn cho API
@@ -177,7 +248,24 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     # xác thực cụ thể (đăng nhập qua e-mail)
     "allauth.account.auth_backends.AuthenticationBackend",
+    # "cloth.apps.customer.auth_backends.EmailBackend",
+    "shop.apps.customer.auth_backends.EmailBackend",
 )
+
+
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.simple_backend.SimpleEngine",
+    },
+}
+
+HAYSTACK_CONNECTIONS = {
+    "default": {
+        "ENGINE": "haystack.backends.solr_backend.SolrEngine",
+        "URL": "http://localhost:8983/solr",
+        "INCLUDE_SPELLING": True,
+    },
+}
 
 # ID của trang web mà bạn đang xây dựng trong hệ thống các trang web của mình.
 SITE_ID = 1
@@ -271,6 +359,9 @@ MIDDLEWARE = [
     # giúp giảm đáng kể thời gian xử lý yêu cầu và tăng tốc độ truy cập cho người dùng
     "django.middleware.cache.FetchFromCacheMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "cloth.apps.basket.middleware.BasketMiddleware",
+    "shop.apps.basket.middleware.BasketMiddleware",
+    "django.contrib.flatpages.middleware.FlatpageFallbackMiddleware",
 ]
 
 #  danh sách các tên miền hoặc địa chỉ IP được cho phép gửi yêu cầu tới server
@@ -308,10 +399,19 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                # "cloth.apps.search.context_processors.search_form",
+                # "cloth.apps.checkout.context_processors.checkout",
+                # "cloth.apps.communication.notifications.context_processors.notifications",
+                # "cloth.core.context_processors.metadata",
+                "shop.apps.search.context_processors.search_form",
+                "shop.apps.checkout.context_processors.checkout",
+                "shop.apps.communication.notifications.context_processors.notifications",
+                "shop.core.context_processors.metadata",
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = "django_project.wsgi.application"
 
@@ -336,9 +436,9 @@ WSGI_APPLICATION = "django_project.wsgi.application"
 #     }
 # }
 DATABASES = {
-    "default": env.dj_db_url("DATABASE_URL", default="postgres://postgres@db/postgres")
+    "default": env.dj_db_url("DATABASE_URL", default="postgres://postgres@db/postgres"),
 }
-
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -357,6 +457,34 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# CLOTH_INITIAL_ORDER_STATUS = "Pending"
+# CLOTH_INITIAL_LINE_STATUS = "Pending"
+# CLOTH_ORDER_STATUS_PIPELINE = {
+#     "Pending": (
+#         "Being processed",
+#         "Cancelled",
+#     ),
+#     "Being processed": (
+#         "Processed",
+#         "Cancelled",
+#     ),
+#     "Cancelled": (),
+# }
+
+
+SHOP_INITIAL_ORDER_STATUS = "Pending"
+SHOP_INITIAL_LINE_STATUS = "Pending"
+SHOP_ORDER_STATUS_PIPELINE = {
+    "Pending": (
+        "Being processed",
+        "Cancelled",
+    ),
+    "Being processed": (
+        "Processed",
+        "Cancelled",
+    ),
+    "Cancelled": (),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

@@ -1,0 +1,30 @@
+{% extends "shop/checkout/checkout.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Payment details" %} | {{ block.super }}
+{% endblock %}
+
+{% block checkout_nav %}
+    {% include 'shop/checkout/nav.html' with step=3 %}
+{% endblock %}
+
+{% block checkout_title %}{% trans "Enter payment details" %}{% endblock %}
+
+{% block order_contents %}{% endblock %}
+{% block shipping_address %}{% endblock %}
+{% block shipping_method %}{% endblock %}
+{% block payment_method %}{% endblock %}
+
+{% block payment_details %}
+    {% block payment_details_content %}
+        <p>{% trans "This page needs implementing within your project.  You may want to use one of Shop's payment gateway libraries:" %}</p>
+        <ul>
+            <li><a href="https://github.com/django-shop/django-shop-paypal">django-shop-paypal</a></li>
+            <li><a href="https://github.com/django-shop/django-shop-adyen">django-shop-adyen</a></li>
+            <li><a href="https://github.com/django-shop/django-shop-docdata">django-shop-docdata</a></li>
+            <li><a href="https://github.com/django-shop/django-shop-accounts">django-shop-accounts</a></li>
+        </ul>
+        <a id="view_preview" href="{% url 'checkout:preview' %}" class="btn btn-primary btn-lg">{% trans "Continue" %}</a>
+    {% endblock payment_details_content %}
+{% endblock payment_details %}

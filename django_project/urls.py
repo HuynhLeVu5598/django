@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.apps import apps
 
 # tạo URL cho tập tin tĩnh (static files) trong Django project
 from django.conf.urls.static import static
@@ -30,6 +31,7 @@ if settings.DEBUG:
     ]
 
 urlpatterns += [
+    path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
     # chứa URL patterns cho các tính năng xác thực và quản trị người dùng trong Django
     # path("accounts/", include("django.contrib.auth.urls")),
@@ -40,6 +42,9 @@ urlpatterns += [
     path("api/", include("apis.urls")),
     path("foods/", include("foods.urls")),
     path("markdownx/", include("markdownx.urls")),
+    # path("shop/", include("cloth.urls")),
+    # path("shop/", include(apps.get_app_config("cloth").urls[0])),
+    path("shop/", include(apps.get_app_config("shop").urls[0])),
 ]
 
 # cho phép Django tải các tập tin từ thư mục media.

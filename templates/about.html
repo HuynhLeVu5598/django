@@ -4,54 +4,68 @@
 
 {% block title %}About{% endblock title %}
 {% block content %}
-<h1>About Page</h1>
 
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
 
-<!-- các tag Django để tải các tập tin JS cần thiết cho các nút đăng nhập xã hội. -->
-<!-- {% providers_media_js %}
+<div class="btn-toolbar">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <h5>abc</h5>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" >
+                <h5>abc</h5>
 
+            </a>
+            <a class="dropdown-item" >
+                <h5>abc</h5>
 
-<h1>Django Allauth Tutorial</h1>
-{% if user.is_authenticated %}
-<p>Welcome {{ user.username }} !!!</p>
-{% else %}
-{% get_providers as socialaccount_providers %}
-{% for provider in socialaccount_providers %} -->
-<!-- lấy đường dẫn đăng nhập cho mỗi nhà cung cấp và tham số "next" để chỉ ra trang mà người dùng sẽ được chuyển hướng sau khi đăng nhập thành công. -->
-<!-- <a href="{% provider_login_url provider.id %}?next={{ request.path }}" class="btn btn-social btn-{{ provider.id }}">
-<i class="fa fa-{{ provider.id }}"></i> Sign in with {{ provider.name }}
-</a>
-{% endfor %} -->
+            </a>
+            <a class="dropdown-item" >
+                <h5>abc</h5>
 
-
-
-<!-- <a href="{% provider_login_url 'github' %}">Sign Up</a> -->
-<!-- <a href="{% provider_login_url "github" process="login" method="js_sdk" %}">Login with your Github Account</a>   -->
-<!-- 
-{% endif %} -->
-
-
-
-<!-- {% load socialaccount %}
-
-
-<form method="post" action="{% url 'account_login' %}">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <div style="display: inline-block">
-        <button class="btn btn-success" type="submit">Log In</button>
+            </a>
+        </div>
     </div>
-    {% get_providers as socialaccount_providers %}
-    {% for provider in socialaccount_providers %} 
-        <a href="{% provider_login_url provider.id %}?next={{ request.path }}" >
-            <button class="btn btn-success" style="margin: 10px;">
-                <i class="fa-brands fa-github"></i> Log in with {{ provider.name }}
-            </button>
-        </a>
-    {% endfor %} 
-</form> -->
-
-
+</div>
 
 
 {% endblock content %}
+<!-- Include the necessary Bootstrap CSS and JS files -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Create the dropdown menu button -->
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown button
+  </button>
+  <!-- Create the dropdown menu items -->
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+  </div>
+</div>
+
+
+{% for product in category.products.all %}
+    <div class="product">
+        <a href="{{ product.get_absolute_url }}">
+            <img src="{{ product.primary_image.url }}" alt="{{ product.primary_image.alt }}">
+        </a>
+        <div class="product-info">
+            <h3><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
+            <p>{{ product.description }}</p>
+        </div>
+    </div>
+{% empty %}
+    <p>No products found.</p>
+{% endfor %}
